@@ -1,0 +1,476 @@
+{% comment %}
+  Section: Tool Orbit
+  Purpose: Interactive AI tool constellation with orbiting icons
+  Slug: tool-orbit
+{% endcomment %}
+
+<style>
+  :root {
+    --orbit-radius-d: 340px;
+    --orbit-radius-t: 220px;
+    --orbit-radius-m: 160px;
+    --icon-size-d: 72px;
+    --icon-size-t: 48px;
+    --icon-size-m: 40px;
+    --logo-size-d: 96px;
+    --logo-size-t: 64px;
+    --logo-size-m: 56px;
+    --u-grey-50: #F8F9FA;
+    --u-blue-50: #E3F2FD;
+    --u-grey-100: #F1F3F4;
+    --u-blue-700: #1976D2;
+    --shadow-light: 0 2px 8px rgba(0,0,0,0.1);
+    --shadow-dark: 0 8px 24px rgba(0,0,0,0.15);
+    --focus-ring: 0 0 0 3px rgba(33, 70, 255, 0.3);
+  }
+
+  #tool-orbit {
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--u-grey-50) 0%, var(--u-blue-50) 25%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    padding: 2rem 1rem;
+  }
+
+  .orbit-container {
+    position: relative;
+    width: calc(var(--orbit-radius-m) * 2.5);
+    height: calc(var(--orbit-radius-m) * 2.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 3rem;
+  }
+
+  .orbit-ring {
+    position: absolute;
+    width: calc(var(--orbit-radius-m) * 2);
+    height: calc(var(--orbit-radius-m) * 2);
+    border: 1px solid rgba(33, 70, 255, 0.1);
+    border-radius: 50%;
+    will-change: transform;
+  }
+
+  .center-logo {
+    position: relative;
+    z-index: 10;
+    width: var(--logo-size-m);
+    height: var(--logo-size-m);
+    background: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-light);
+    font-weight: 800;
+    font-size: 14px;
+    color: var(--u-blue-700);
+    text-align: center;
+    line-height: 1.2;
+  }
+
+  .tool-icon {
+    position: absolute;
+    width: var(--icon-size-m);
+    height: var(--icon-size-m);
+    background: var(--u-grey-100);
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-light);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    will-change: transform;
+    z-index: 5;
+  }
+
+  .tool-icon:hover,
+  .tool-icon:focus {
+    transform: scale(1.2);
+    box-shadow: var(--shadow-dark), var(--focus-ring);
+    outline: none;
+  }
+
+  .tool-icon svg {
+    width: 24px;
+    height: 24px;
+    fill: var(--u-blue-700);
+  }
+
+  .tool-placeholder {
+    width: 24px;
+    height: 24px;
+    background: var(--u-blue-700);
+    color: white;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 12px;
+  }
+
+  .tooltip {
+    position: absolute;
+    bottom: calc(100% + 12px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--u-blue-700);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    line-height: 1.4;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+    z-index: 20;
+  }
+
+  .tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: var(--u-blue-700);
+  }
+
+  .tool-icon:hover .tooltip,
+  .tool-icon:focus .tooltip {
+    opacity: 1;
+  }
+
+  .orbit-content {
+    text-align: center;
+    max-width: 800px;
+  }
+
+  .orbit-headline {
+    font-size: clamp(24px, 4vw, 48px);
+    font-weight: 800;
+    margin: 0 0 16px;
+    color: var(--u-blue-700);
+  }
+
+  .orbit-subhead {
+    font-size: clamp(16px, 2.5vw, 20px);
+    color: #666;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  /* Tablet adjustments */
+  @media (min-width: 600px) {
+    .orbit-container {
+      width: calc(var(--orbit-radius-t) * 2.5);
+      height: calc(var(--orbit-radius-t) * 2.5);
+    }
+    .orbit-ring {
+      width: calc(var(--orbit-radius-t) * 2);
+      height: calc(var(--orbit-radius-t) * 2);
+    }
+    .center-logo {
+      width: var(--logo-size-t);
+      height: var(--logo-size-t);
+      font-size: 16px;
+    }
+    .tool-icon {
+      width: var(--icon-size-t);
+      height: var(--icon-size-t);
+    }
+    .tool-icon svg {
+      width: 28px;
+      height: 28px;
+    }
+  }
+
+  /* Desktop adjustments */
+  @media (min-width: 900px) {
+    .orbit-container {
+      width: calc(var(--orbit-radius-d) * 2.5);
+      height: calc(var(--orbit-radius-d) * 2.5);
+    }
+    .orbit-ring {
+      width: calc(var(--orbit-radius-d) * 2);
+      height: calc(var(--orbit-radius-d) * 2);
+    }
+    .center-logo {
+      width: var(--logo-size-d);
+      height: var(--logo-size-d);
+      font-size: 18px;
+    }
+    .tool-icon {
+      width: var(--icon-size-d);
+      height: var(--icon-size-d);
+    }
+    .tool-icon svg {
+      width: 32px;
+      height: 32px;
+    }
+  }
+
+  /* Mobile semicircle layout */
+  @media (max-width: 599px) {
+    .orbit-ring {
+      display: none;
+    }
+    .tool-icon:nth-child(1) { top: -20px; left: calc(50% - 20px); }
+    .tool-icon:nth-child(2) { top: 10px; right: 20px; }
+    .tool-icon:nth-child(3) { bottom: 10px; right: 20px; }
+    .tool-icon:nth-child(4) { bottom: -20px; right: calc(50% - 20px); }
+    .tool-icon:nth-child(5) { bottom: -20px; left: calc(50% - 20px); }
+    .tool-icon:nth-child(6) { bottom: 10px; left: 20px; }
+    .tool-icon:nth-child(7) { top: 10px; left: 20px; }
+    .tool-icon:nth-child(8) { top: -20px; right: calc(50% - 20px); }
+  }
+
+  /* Reduced motion fallback */
+  @media (prefers-reduced-motion: reduce) {
+    .orbit-ring,
+    .tool-icon {
+      animation: none !important;
+    }
+  }
+
+  /* No-GSAP fallback */
+  .no-gsap .orbit-ring {
+    animation: rotate-fallback 60s linear infinite;
+  }
+  
+  @keyframes rotate-fallback {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+</style>
+
+<section id="tool-orbit">
+  <div class="orbit-container">
+    <div class="orbit-ring">
+      {% for block in section.blocks limit: 8 %}
+        <button class="tool-icon"
+                style="
+                  --angle: {{ forloop.index0 | times: 45 }}deg;
+                  transform: rotate(var(--angle)) translateY(calc(var(--orbit-radius-m) * -1)) rotate(calc(var(--angle) * -1));
+                "
+                aria-label="{{ block.settings.tooltip | escape }}"
+                {% if block.settings.url != blank %}onclick="window.open('{{ block.settings.url }}', '_blank')"{% endif %}
+                {{ block.shopify_attributes }}>
+          {% if block.settings.icon_svg != blank %}
+            {{ block.settings.icon_svg }}
+          {% else %}
+            <div class="tool-placeholder">
+              {{ block.settings.tooltip | slice: 0 | upcase }}
+            </div>
+          {% endif %}
+          <div class="tooltip">{{ block.settings.tooltip | escape }}</div>
+        </button>
+      {% endfor %}
+    </div>
+    
+    <div class="center-logo">
+      {{ section.settings.caption_center | default: 'Unbundl' }}
+    </div>
+  </div>
+  
+  <div class="orbit-content">
+    {% if section.settings.headline != blank %}
+      <h2 class="orbit-headline">{{ section.settings.headline }}</h2>
+    {% endif %}
+    {% if section.settings.subhead != blank %}
+      <p class="orbit-subhead">{{ section.settings.subhead }}</p>
+    {% endif %}
+  </div>
+</section>
+
+<script>
+(function() {
+  'use strict';
+  
+  document.addEventListener('DOMContentLoaded', function() {
+    const container = document.querySelector('.orbit-container');
+    const ring = document.querySelector('.orbit-ring');
+    const icons = document.querySelectorAll('.tool-icon');
+    
+    if (!container || !ring || !icons.length) {
+      console.warn('Tool orbit elements not found');
+      return;
+    }
+    
+    // Check for reduced motion preference
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return;
+    }
+    
+    let rotationAnimation = null;
+    
+    // GSAP initialization
+    function initGSAP() {
+      if (typeof gsap !== 'undefined') {
+        try {
+          if (typeof ScrollTrigger !== 'undefined') {
+            gsap.registerPlugin(ScrollTrigger);
+          }
+          
+          // Only activate on tablet and desktop
+          if (window.matchMedia('(min-width: 600px)').matches) {
+            rotationAnimation = gsap.to(ring, {
+              rotation: 360,
+              duration: 40,
+              repeat: -1,
+              ease: 'none'
+            });
+            
+            // Parallax scroll effect (if ScrollTrigger is available)
+            if (typeof ScrollTrigger !== 'undefined') {
+              ScrollTrigger.create({
+                trigger: container,
+                start: 'top bottom',
+                end: 'bottom top',
+                onUpdate: function(self) {
+                  const progress = self.progress;
+                  gsap.set(ring, { yPercent: progress * -8 });
+                }
+              });
+            }
+            
+            // Hover pause/resume
+            icons.forEach(function(icon) {
+              icon.addEventListener('pointerenter', function() {
+                if (rotationAnimation) rotationAnimation.pause();
+              });
+              icon.addEventListener('pointerleave', function() {
+                if (rotationAnimation) rotationAnimation.resume();
+              });
+              icon.addEventListener('focus', function() {
+                if (rotationAnimation) rotationAnimation.pause();
+              });
+              icon.addEventListener('blur', function() {
+                if (rotationAnimation) rotationAnimation.resume();
+              });
+            });
+          }
+        } catch (error) {
+          console.warn('GSAP initialization failed:', error);
+          document.body.classList.add('no-gsap');
+        }
+      } else {
+        // Fallback for missing GSAP
+        document.body.classList.add('no-gsap');
+      }
+    }
+    
+    // Update icon positions for responsive breakpoints
+    function updateIconPositions() {
+      const isTablet = window.matchMedia('(min-width: 600px) and (max-width: 899px)').matches;
+      const isDesktop = window.matchMedia('(min-width: 900px)').matches;
+      
+      if (window.matchMedia('(min-width: 600px)').matches) {
+        icons.forEach(function(icon, index) {
+          const angle = index * 45;
+          const radius = isDesktop ? 'var(--orbit-radius-d)' : 'var(--orbit-radius-t)';
+          icon.style.transform = 'rotate(' + angle + 'deg) translateY(calc(' + radius + ' * -1)) rotate(' + (-angle) + 'deg)';
+        });
+      }
+    }
+    
+    // Initialize
+    initGSAP();
+    updateIconPositions();
+    
+    // Handle resize
+    let resizeTimeout;
+    window.addEventListener('resize', function() {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(function() {
+        updateIconPositions();
+        
+        // Reinitialize GSAP for responsive changes
+        if (rotationAnimation) {
+          rotationAnimation.kill();
+          rotationAnimation = null;
+        }
+        initGSAP();
+      }, 250);
+    });
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Tool Orbit",
+  "tag": "section",
+  "class": "tool-orbit",
+  "settings": [
+    {
+      "type": "text",
+      "id": "headline",
+      "label": "Headline",
+      "default": "Where code meets craft."
+    },
+    {
+      "type": "textarea",
+      "id": "subhead",
+      "label": "Subheading",
+      "default": "Eight best-in-class models woven into one Brand Graph."
+    },
+    {
+      "type": "text",
+      "id": "caption_center",
+      "label": "Center Caption",
+      "default": "Unbundl Fabric"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "tool",
+      "name": "AI Tool",
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "icon_svg",
+          "label": "Icon SVG Code",
+          "info": "Paste SVG code here (optional)"
+        },
+        {
+          "type": "text",
+          "id": "tooltip",
+          "label": "Tooltip Text",
+          "default": "AI Tool"
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "Tool URL",
+          "info": "Optional link to open when clicked"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 8,
+  "presets": [
+    {
+      "name": "Toolstack Orbit – 8 tools",
+      "blocks": [
+        { "type": "tool", "settings": { "tooltip": "GPT-4o · copy & UX wireframes" } },
+        { "type": "tool", "settings": { "tooltip": "Claude 3 · brand-tone QA" } },
+        { "type": "tool", "settings": { "tooltip": "Midjourney v6 · concept boards" } },
+        { "type": "tool", "settings": { "tooltip": "Runway Gen-4 · ad video" } },
+        { "type": "tool", "settings": { "tooltip": "Pinecone · vector RAG" } },
+        { "type": "tool", "settings": { "tooltip": "Weaviate · long-term memory" } },
+        { "type": "tool", "settings": { "tooltip": "ElevenLabs · voice clone" } },
+        { "type": "tool", "settings": { "tooltip": "BigQuery · live media data" } }
+      ]
+    }
+  ]
+}
+{% endschema %}
