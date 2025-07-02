@@ -88,6 +88,11 @@
     transition: all 0.3s ease;
     will-change: transform;
     z-index: 5;
+    /* Position icons around the circle */
+    top: 50%;
+    left: 50%;
+    margin-top: calc(var(--icon-size-m) / -2);
+    margin-left: calc(var(--icon-size-m) / -2);
   }
 
   .tool-icon:hover,
@@ -186,6 +191,8 @@
     .tool-icon {
       width: var(--icon-size-t);
       height: var(--icon-size-t);
+      margin-top: calc(var(--icon-size-t) / -2);
+      margin-left: calc(var(--icon-size-t) / -2);
     }
     .tool-icon svg {
       width: 28px;
@@ -211,6 +218,8 @@
     .tool-icon {
       width: var(--icon-size-d);
       height: var(--icon-size-d);
+      margin-top: calc(var(--icon-size-d) / -2);
+      margin-left: calc(var(--icon-size-d) / -2);
     }
     .tool-icon svg {
       width: 32px;
@@ -223,14 +232,14 @@
     .orbit-ring {
       display: none;
     }
-    .tool-icon:nth-child(1) { top: -20px; left: calc(50% - 20px); }
-    .tool-icon:nth-child(2) { top: 10px; right: 20px; }
-    .tool-icon:nth-child(3) { bottom: 10px; right: 20px; }
-    .tool-icon:nth-child(4) { bottom: -20px; right: calc(50% - 20px); }
-    .tool-icon:nth-child(5) { bottom: -20px; left: calc(50% - 20px); }
-    .tool-icon:nth-child(6) { bottom: 10px; left: 20px; }
-    .tool-icon:nth-child(7) { top: 10px; left: 20px; }
-    .tool-icon:nth-child(8) { top: -20px; right: calc(50% - 20px); }
+    .tool-icon:nth-child(2) { top: -20px; left: calc(50% - 20px); transform: none; }
+    .tool-icon:nth-child(3) { top: 10px; right: 20px; transform: none; }
+    .tool-icon:nth-child(4) { bottom: 10px; right: 20px; transform: none; }
+    .tool-icon:nth-child(5) { bottom: -20px; right: calc(50% - 20px); transform: none; }
+    .tool-icon:nth-child(6) { bottom: -20px; left: calc(50% - 20px); transform: none; }
+    .tool-icon:nth-child(7) { bottom: 10px; left: 20px; transform: none; }
+    .tool-icon:nth-child(8) { top: 10px; left: 20px; transform: none; }
+    .tool-icon:nth-child(9) { top: -20px; right: calc(50% - 20px); transform: none; }
   }
 
   /* Reduced motion fallback */
@@ -254,27 +263,24 @@
 
 <section id="tool-orbit">
   <div class="orbit-container">
-    <div class="orbit-ring">
-      {% for block in section.blocks limit: 8 %}
-        <button class="tool-icon"
-                style="
-                  --angle: {{ forloop.index0 | times: 45 }}deg;
-                  transform: rotate(var(--angle)) translateY(calc(var(--orbit-radius-m) * -1)) rotate(calc(var(--angle) * -1));
-                "
-                aria-label="{{ block.settings.tooltip | escape }}"
-                {% if block.settings.url != blank %}onclick="window.open('{{ block.settings.url }}', '_blank')"{% endif %}
-                {{ block.shopify_attributes }}>
-          {% if block.settings.icon_svg != blank %}
-            {{ block.settings.icon_svg }}
-          {% else %}
-            <div class="tool-placeholder">
-              {{ block.settings.tooltip | slice: 0 | upcase }}
-            </div>
-          {% endif %}
-          <div class="tooltip">{{ block.settings.tooltip | escape }}</div>
-        </button>
-      {% endfor %}
-    </div>
+    <div class="orbit-ring"></div>
+    
+    {% for block in section.blocks limit: 8 %}
+      <button class="tool-icon"
+              data-index="{{ forloop.index0 }}"
+              aria-label="{{ block.settings.tooltip | escape }}"
+              {% if block.settings.url != blank %}onclick="window.open('{{ block.settings.url }}', '_blank')"{% endif %}
+              {{ block.shopify_attributes }}>
+        {% if block.settings.icon_svg != blank %}
+          {{ block.settings.icon_svg }}
+        {% else %}
+          <div class="tool-placeholder">
+            {{ block.settings.tooltip | slice: 0 | upcase }}
+          </div>
+        {% endif %}
+        <div class="tooltip">{{ block.settings.tooltip | escape }}</div>
+      </button>
+    {% endfor %}
     
     <div class="center-logo">
       {{ section.settings.caption_center | default: 'Unbundl' }}
@@ -370,14 +376,34 @@
     
     // Update icon positions for responsive breakpoints
     function updateIconPositions() {
+      const isMobile = window.matchMedia('(max-width: 599px)').matches;
       const isTablet = window.matchMedia('(min-width: 600px) and (max-width: 899px)').matches;
       const isDesktop = window.matchMedia('(min-width: 900px)').matches;
       
-      if (window.matchMedia('(min-width: 600px)').matches) {
-        icons.forEach(function(icon, index) {
-          const angle = index * 45;
-          const radius = isDesktop ? 'var(--orbit-radius-d)' : 'var(--orbit-radius-t)';
-          icon.style.transform = 'rotate(' + angle + 'deg) translateY(calc(' + radius + ' * -1)) rotate(' + (-angle) + 'deg)';
+      if (isMobile) {
+        // Use CSS positioning for mobile semicircle
+        icons.forEach(function(icon) {
+          icon.style.transform = '';
+        });
+      } else {
+        // Calculate positions for tablet and desktop
+        let radius;
+        if (isDesktop) {
+          radius = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--orbit-radius-d')) || 340;
+        } else {
+          radius = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--orbit-radius-t')) || 220;
+        }
+        
+        icons.forEach(function(icon) {
+          const index = parseInt(icon.getAttribute('data-index'));
+          const angle = (index * 45) * (Math.PI / 180); // Convert to radians
+          
+          // Calculate x, y coordinates
+          const x = Math.cos(angle - Math.PI / 2) * radius; // -π/2 to start at top
+          const y = Math.sin(angle - Math.PI / 2) * radius;
+          
+          // Position the icon
+          icon.style.transform = 'translate(' + x + 'px, ' + y + 'px)';
         });
       }
     }
