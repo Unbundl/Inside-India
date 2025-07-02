@@ -417,6 +417,15 @@
       margin-bottom: 3rem;
     }
   }
+
+  .tool-icon-inner {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    will-change: transform;
+  }
 </style>
 
 <section id="tool-orbit">
@@ -433,13 +442,15 @@
                 aria-label="{{ block.settings.tooltip | escape }}"
                 {% if block.settings.url != blank %}onclick="window.open('{{ block.settings.url }}', '_blank')"{% endif %}
                 {{ block.shopify_attributes }}>
-          {% if block.settings.icon_svg != blank %}
-            {{ block.settings.icon_svg }}
-          {% else %}
-            <div class="tool-placeholder">
-              {{ block.settings.tooltip | slice: 0 | upcase }}
-            </div>
-          {% endif %}
+          <span class="tool-icon-inner">
+            {% if block.settings.icon_svg != blank %}
+              {{ block.settings.icon_svg }}
+            {% else %}
+              <div class="tool-placeholder">
+                {{ block.settings.tooltip | slice: 0 | upcase }}
+              </div>
+            {% endif %}
+          </span>
           <div class="tooltip">{{ block.settings.tooltip | escape }}</div>
         </button>
       {% endfor %}
@@ -530,3 +541,48 @@
   ]
 }
 {% endschema %}
+
+<script>
+  function updateIconOrientation() {
+    const ringRotation = gsap.getProperty(ring, 'rotation');
+    document.querySelectorAll('.tool-icon-inner').forEach(function(inner){
+      gsap.set(inner, { rotation: -ringRotation });
+    });
+  }
+
+  function initGSAP() {
+    const icons = document.querySelectorAll('.tool-icon');
+    const ring = document.querySelector('.orbit-ring--main');
+
+    rotationAnimation = gsap.to(ring, {
+      rotation: 360,
+      duration: 40,
+      repeat: -1,
+      ease: 'none',
+      onUpdate: updateIconOrientation
+    });
+
+    icons.forEach(function(icon) {
+      icon.addEventListener('pointerenter', function() {
+        if (rotationAnimation) rotationAnimation.pause();
+      });
+      icon.addEventListener('pointerleave', function() {
+        if (rotationAnimation) rotationAnimation.resume();
+      });
+      icon.addEventListener('focus', function() {
+        if (rotationAnimation) rotationAnimation.pause();
+      });
+      icon.addEventListener('blur', function() {
+        if (rotationAnimation) rotationAnimation.resume();
+      });
+    });
+
+    // Counter-rotate icon inners initially
+    updateIconOrientation();
+  }
+
+  // Initialize
+  initGSAP();
+  updateIconPositions();
+  updateIconOrientation();
+</script>
