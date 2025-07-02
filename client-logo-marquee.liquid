@@ -1,0 +1,248 @@
+{% schema %}
+{
+  "name": "Client Logo Marquee",
+  "tag": "section",
+  "class": "client-logo-marquee-section",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "OUR CLIENTS" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "From startups to giants —\nWe deliver." },
+    { "type": "image_picker", "id": "logo1", "label": "Logo 1" },
+    { "type": "image_picker", "id": "logo2", "label": "Logo 2" },
+    { "type": "image_picker", "id": "logo3", "label": "Logo 3" },
+    { "type": "image_picker", "id": "logo4", "label": "Logo 4" },
+    { "type": "image_picker", "id": "logo5", "label": "Logo 5" },
+    { "type": "image_picker", "id": "logo6", "label": "Logo 6" },
+    { "type": "image_picker", "id": "logo7", "label": "Logo 7" },
+    { "type": "image_picker", "id": "logo8", "label": "Logo 8" },
+    { "type": "image_picker", "id": "logo9", "label": "Logo 9" },
+    { "type": "image_picker", "id": "logo10", "label": "Logo 10" },
+    { "type": "image_picker", "id": "logo11", "label": "Logo 11" },
+    { "type": "image_picker", "id": "logo12", "label": "Logo 12" }
+  ],
+  "presets": [
+    { "name": "Client Logo Marquee", "category": "Unbundl UIUX" }
+  ]
+}
+{% endschema %}
+
+{%- comment -%} Collect only valid logos {%- endcomment -%}
+{% assign valid_logos = '' %}
+{% for i in (1..12) %}
+  {% assign key = 'logo' | append: i %}
+  {% assign img = section.settings[key] %}
+  {% if img != blank %}
+    {% if valid_logos == blank %}
+      {% assign valid_logos = img %}
+    {% else %}
+      {% assign valid_logos = valid_logos | append: '|' | append: img %}
+    {% endif %}
+  {% endif %}
+{% endfor %}
+
+{% assign logos = valid_logos | split: '|' %}
+
+<section class="client-logo-marquee">
+  <div class="marquee-header">
+    <p class="eyebrow">{{ section.settings.eyebrow }}</p>
+    <h2 class="heading">{{ section.settings.heading | newline_to_br }}</h2>
+  </div>
+
+  {% if logos.size > 0 %}
+    <div class="marquee-wrapper">
+      {% for row in (1..3) %}
+        <div class="marquee-row row-{{ row }}">
+          <div class="marquee-track">
+            {%- comment -%} First set of logos {%- endcomment -%}
+            {% for logo in logos %}
+              <div class="marquee-logo">
+                <img src="{{ logo | image_url: width: 200 }}" alt="Client Logo" loading="lazy" />
+              </div>
+            {% endfor %}
+            {%- comment -%} Duplicate set for seamless loop {%- endcomment -%}
+            {% for logo in logos %}
+              <div class="marquee-logo">
+                <img src="{{ logo | image_url: width: 200 }}" alt="Client Logo" loading="lazy" />
+              </div>
+            {% endfor %}
+            {%- comment -%} Triple set for better seamless effect {%- endcomment -%}
+            {% for logo in logos %}
+              <div class="marquee-logo">
+                <img src="{{ logo | image_url: width: 200 }}" alt="Client Logo" loading="lazy" />
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+</section>
+
+<style>
+  .client-logo-marquee {
+    background-color: #0B0E1C;
+    padding: 100px 20px;
+    color: #fff;
+    text-align: center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .marquee-header {
+    margin-bottom: 60px;
+  }
+
+  .eyebrow {
+    text-transform: uppercase;
+    color: #6A83FF;
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+  }
+
+  .heading {
+    font-size: clamp(2.2rem, 6vw, 3.2rem);
+    font-weight: 700;
+    line-height: 1.3;
+    margin: 0;
+  }
+
+  .marquee-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    align-items: center;
+    width: 100%;
+  }
+
+  .marquee-row {
+    overflow: hidden;
+    white-space: nowrap;
+    width: 100%;
+    position: relative;
+    mask: linear-gradient(
+      90deg,
+      transparent,
+      white 20%,
+      white 80%,
+      transparent
+    );
+    -webkit-mask: linear-gradient(
+      90deg,
+      transparent,
+      white 20%,
+      white 80%,
+      transparent
+    );
+  }
+
+  .marquee-track {
+    display: inline-flex;
+    gap: 80px;
+    align-items: center;
+    animation: scroll-left 40s linear infinite;
+    will-change: transform;
+  }
+
+  .row-2 .marquee-track {
+    animation-name: scroll-right;
+    animation-duration: 45s;
+  }
+
+  .row-3 .marquee-track {
+    animation-duration: 35s;
+  }
+
+  .marquee-logo {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 60px;
+  }
+
+  .marquee-logo img {
+    max-height: 60px;
+    max-width: 120px;
+    width: auto;
+    height: auto;
+    opacity: 0.7;
+    filter: grayscale(100%) brightness(0) invert(1);
+    transition: all 0.3s ease;
+    object-fit: contain;
+  }
+
+  .marquee-logo:hover img {
+    opacity: 1;
+    transform: scale(1.1);
+    filter: grayscale(0%) brightness(1) invert(0);
+  }
+
+  @keyframes scroll-left {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-33.333%);
+    }
+  }
+
+  @keyframes scroll-right {
+    0% {
+      transform: translateX(-33.333%);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .client-logo-marquee {
+      padding: 60px 20px;
+    }
+
+    .marquee-header {
+      margin-bottom: 40px;
+    }
+
+    .marquee-wrapper {
+      gap: 30px;
+    }
+
+    .marquee-track {
+      gap: 50px;
+    }
+
+    .marquee-logo {
+      height: 40px;
+    }
+
+    .marquee-logo img {
+      max-height: 40px;
+      max-width: 80px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .marquee-track {
+      gap: 40px;
+    }
+
+    .marquee-logo img {
+      max-height: 35px;
+      max-width: 70px;
+    }
+  }
+
+  /* Pause animation on hover */
+  .marquee-row:hover .marquee-track {
+    animation-play-state: paused;
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    .marquee-track {
+      animation: none;
+    }
+  }
+</style>
