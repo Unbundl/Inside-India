@@ -1,0 +1,838 @@
+{% comment %}
+  Section: Tool Orbit (Improved)
+  Purpose: Interactive AI tool constellation with orbiting icons
+  Slug: tool-orbit-improved
+{% endcomment %}
+
+<style>
+  :root {
+    --orbit-radius: 140px;
+    --icon-size: 50px;
+    --logo-size: 70px;
+    --primary-blue: #2563eb;
+    --secondary-blue: #3b82f6;
+    --light-blue: #dbeafe;
+    --white: #ffffff;
+    --gray-100: #f3f4f6;
+    --gray-600: #4b5563;
+    --gray-800: #1f2937;
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --animation-duration: 30s;
+  }
+
+  /* RESPONSIVE BREAKPOINTS */
+  @media (min-width: 600px) {
+    :root {
+      --orbit-radius: 180px;
+      --icon-size: 60px;
+      --logo-size: 80px;
+    }
+  }
+
+  @media (min-width: 900px) {
+    :root {
+      --orbit-radius: 220px;
+      --icon-size: 70px;
+      --logo-size: 90px;
+    }
+  }
+
+  /* SECTION LAYOUT */
+  #tool-orbit {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #tool-orbit::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 50% 50%, rgba(37, 99, 235, 0.03) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .orbit-wrapper {
+    max-width: 1200px;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    align-items: center;
+  }
+
+  @media (min-width: 992px) {
+    .orbit-wrapper {
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+    }
+  }
+
+  /* CONTENT SECTION */
+  .orbit-content {
+    text-align: center;
+  }
+
+  @media (min-width: 992px) {
+    .orbit-content {
+      text-align: left;
+    }
+  }
+
+  .orbit-headline {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    color: var(--gray-800);
+    margin-bottom: 1rem;
+    line-height: 1.2;
+  }
+
+  .orbit-subhead {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    color: var(--gray-600);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  /* ORBIT CONTAINER */
+  .orbit-container {
+    position: relative;
+    width: calc(var(--orbit-radius) * 2.4);
+    height: calc(var(--orbit-radius) * 2.4);
+    margin: 0 auto;
+  }
+
+  /* ROTATING TRACK */
+  .orbit-track {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    animation: orbit-spin var(--animation-duration) linear infinite;
+    will-change: transform;
+  }
+
+  @keyframes orbit-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  /* VISUAL RING */
+  .orbit-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: calc(var(--orbit-radius) * 2);
+    height: calc(var(--orbit-radius) * 2);
+    border: 2px solid rgba(37, 99, 235, 0.15);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  /* CENTER LOGO */
+  .center-logo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: var(--logo-size);
+    height: var(--logo-size);
+    background: var(--white);
+    border: 3px solid var(--light-blue);
+    border-radius: 15%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: clamp(14px, 2vw, 18px);
+    color: var(--primary-blue);
+    box-shadow: var(--shadow-lg);
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  /* ICON WRAPPER */
+  .icon-wrapper {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: var(--icon-size);
+    height: var(--icon-size);
+  }
+
+  /* TOOL ICON */
+  .tool-icon {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: var(--white);
+    border: 2px solid var(--gray-100);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: var(--shadow);
+    animation: counter-spin var(--animation-duration) linear infinite reverse;
+    will-change: transform;
+    outline: none;
+  }
+
+  @keyframes counter-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  .tool-icon:hover,
+  .tool-icon:focus {
+    scale: 1.15;
+    box-shadow: var(--shadow-lg);
+    border-color: var(--secondary-blue);
+    z-index: 5;
+  }
+
+  .tool-icon:focus {
+    box-shadow: var(--shadow-lg), 0 0 0 3px rgba(37, 99, 235, 0.3);
+  }
+
+  .tool-icon:active {
+    scale: 1.05;
+  }
+
+  .tool-icon svg {
+    width: 24px;
+    height: 24px;
+    fill: var(--primary-blue);
+    transition: var(--transition);
+  }
+
+  .tool-icon:hover svg,
+  .tool-icon:focus svg {
+    fill: var(--secondary-blue);
+  }
+
+  .tool-placeholder {
+    width: 28px;
+    height: 28px;
+    background: var(--primary-blue);
+    color: white;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+  }
+
+  /* POSITION WRAPPERS AROUND CIRCLE */
+  .icon-wrapper:nth-child(1) { 
+    transform: translate(-50%, -50%) rotate(0deg) translateY(calc(var(--orbit-radius) * -1));
+  }
+  .icon-wrapper:nth-child(2) { 
+    transform: translate(-50%, -50%) rotate(45deg) translateY(calc(var(--orbit-radius) * -1));
+  }
+  .icon-wrapper:nth-child(3) { 
+    transform: translate(-50%, -50%) rotate(90deg) translateY(calc(var(--orbit-radius) * -1));
+  }
+  .icon-wrapper:nth-child(4) { 
+    transform: translate(-50%, -50%) rotate(135deg) translateY(calc(var(--orbit-radius) * -1));
+  }
+  .icon-wrapper:nth-child(5) { 
+    transform: translate(-50%, -50%) rotate(180deg) translateY(calc(var(--orbit-radius) * -1));
+  }
+  .icon-wrapper:nth-child(6) { 
+    transform: translate(-50%, -50%) rotate(225deg) translateY(calc(var(--orbit-radius) * -1));
+  }
+  .icon-wrapper:nth-child(7) { 
+    transform: translate(-50%, -50%) rotate(270deg) translateY(calc(var(--orbit-radius) * -1));
+  }
+  .icon-wrapper:nth-child(8) { 
+    transform: translate(-50%, -50%) rotate(315deg) translateY(calc(var(--orbit-radius) * -1));
+  }
+
+  /* TOOLTIP */
+  .tooltip {
+    position: absolute;
+    bottom: calc(100% + 12px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--gray-800);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.2s ease;
+    z-index: 20;
+    font-family: 'Inter', sans-serif;
+    max-width: 200px;
+    text-align: center;
+  }
+
+  .tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: var(--gray-800);
+  }
+
+  .tool-icon:hover .tooltip,
+  .tool-icon:focus .tooltip {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-4px);
+  }
+
+  /* ANIMATION CONTROLS */
+  .orbit-container:hover .orbit-track,
+  .orbit-container:focus-within .orbit-track {
+    animation-play-state: paused;
+  }
+
+  .orbit-container:hover .tool-icon,
+  .orbit-container:focus-within .tool-icon {
+    animation-play-state: paused;
+  }
+
+  /* MOBILE FALLBACK */
+  .mobile-grid {
+    display: none;
+  }
+
+  @media (max-width: 599px) {
+    .orbit-container {
+      display: none;
+    }
+    
+    .mobile-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      max-width: 300px;
+      margin: 0 auto;
+    }
+    
+    .mobile-grid .tool-icon {
+      position: static;
+      transform: none;
+      animation: none;
+      margin: 0 auto;
+      width: var(--icon-size);
+      height: var(--icon-size);
+    }
+    
+    .mobile-grid .center-logo {
+      position: static;
+      transform: none;
+      grid-column: 2;
+      margin: 0 auto;
+      width: var(--logo-size);
+      height: var(--logo-size);
+    }
+    
+    .mobile-grid .tooltip {
+      display: none;
+    }
+  }
+
+  /* REDUCED MOTION */
+  @media (prefers-reduced-motion: reduce) {
+    .orbit-track,
+    .tool-icon {
+      animation: none;
+    }
+  }
+
+  /* LOADING STATE */
+  .orbit-container.loading {
+    opacity: 0.7;
+  }
+
+  .orbit-container.loading .orbit-track {
+    animation-play-state: paused;
+  }
+
+  /* ACCESSIBILITY IMPROVEMENTS */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* HIGH CONTRAST MODE SUPPORT */
+  @media (prefers-contrast: high) {
+    .tool-icon {
+      border-width: 3px;
+    }
+    
+    .center-logo {
+      border-width: 4px;
+    }
+    
+    .orbit-ring {
+      border-width: 3px;
+      border-color: var(--gray-800);
+    }
+  }
+</style>
+
+<section id="tool-orbit" aria-labelledby="orbit-heading">
+  <div class="orbit-wrapper">
+    <!-- Content -->
+    <div class="orbit-content">
+      {% if section.settings.headline != blank %}
+        <h2 id="orbit-heading" class="orbit-headline">{{ section.settings.headline }}</h2>
+      {% endif %}
+      {% if section.settings.subhead != blank %}
+        <p class="orbit-subhead">{{ section.settings.subhead }}</p>
+      {% endif %}
+    </div>
+
+    <!-- Orbit Animation -->
+    <div class="orbit-container" role="region" aria-label="Interactive AI tools constellation">
+      <!-- Static visual ring -->
+      <div class="orbit-ring" aria-hidden="true"></div>
+      
+      <!-- Rotating track with icons -->
+      <div class="orbit-track" role="group" aria-label="AI tools">
+        {% for block in section.blocks limit: 8 %}
+          <div class="icon-wrapper">
+            {% if block.settings.url != blank %}
+              <a href="{{ block.settings.url }}" 
+                 class="tool-icon"
+                 aria-describedby="tooltip-{{ forloop.index }}"
+                 target="_blank"
+                 rel="noopener noreferrer"
+                 {{ block.shopify_attributes }}>
+            {% else %}
+              <button class="tool-icon"
+                      aria-describedby="tooltip-{{ forloop.index }}"
+                      {{ block.shopify_attributes }}>
+            {% endif %}
+              {% if block.settings.icon_svg != blank %}
+                {{ block.settings.icon_svg }}
+                <span class="sr-only">{{ block.settings.tooltip | escape }}</span>
+              {% else %}
+                <div class="tool-placeholder" aria-hidden="true">
+                  {{ block.settings.tooltip | slice: 0, 1 | upcase }}
+                </div>
+                <span class="sr-only">{{ block.settings.tooltip | escape }}</span>
+              {% endif %}
+              <div id="tooltip-{{ forloop.index }}" class="tooltip" role="tooltip">
+                {{ block.settings.tooltip | escape }}
+              </div>
+            {% if block.settings.url != blank %}
+              </a>
+            {% else %}
+              </button>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+      
+      <!-- Static center logo -->
+      <div class="center-logo" aria-label="Center: {{ section.settings.caption_center | default: 'AI' }}">
+        {{ section.settings.caption_center | default: 'AI' }}
+      </div>
+    </div>
+
+    <!-- Mobile fallback grid -->
+    <div class="mobile-grid" role="grid" aria-label="AI tools grid">
+      {% for block in section.blocks limit: 8 %}
+        {% if forloop.index == 5 %}
+          <div class="center-logo" aria-label="Center: {{ section.settings.caption_center | default: 'AI' }}">
+            {{ section.settings.caption_center | default: 'AI' }}
+          </div>
+        {% endif %}
+        {% if block.settings.url != blank %}
+          <a href="{{ block.settings.url }}" 
+             class="tool-icon"
+             aria-label="{{ block.settings.tooltip | escape }}"
+             target="_blank"
+             rel="noopener noreferrer">
+        {% else %}
+          <button class="tool-icon" aria-label="{{ block.settings.tooltip | escape }}">
+        {% endif %}
+          {% if block.settings.icon_svg != blank %}
+            {{ block.settings.icon_svg }}
+          {% else %}
+            <div class="tool-placeholder" aria-hidden="true">
+              {{ block.settings.tooltip | slice: 0, 1 | upcase }}
+            </div>
+          {% endif %}
+        {% if block.settings.url != blank %}
+          </a>
+        {% else %}
+          </button>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Tool Orbit (Improved)",
+  "tag": "section",
+  "class": "tool-orbit",
+  "settings": [
+    {
+      "type": "text",
+      "id": "headline",
+      "label": "Headline",
+      "default": "AI-Powered Innovation"
+    },
+    {
+      "type": "textarea",
+      "id": "subhead",
+      "label": "Subheading",
+      "default": "Eight cutting-edge tools working in perfect harmony to transform your workflow."
+    },
+    {
+      "type": "text",
+      "id": "caption_center",
+      "label": "Center Caption",
+      "default": "AI"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_advanced_animations",
+      "label": "Enable Advanced Animations",
+      "default": false,
+      "info": "Uses GSAP for smoother animations (requires GSAP library)"
+    },
+    {
+      "type": "range",
+      "id": "animation_speed",
+      "label": "Animation Speed",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "s",
+      "default": 30
+    }
+  ],
+  "blocks": [
+    {
+      "type": "tool",
+      "name": "AI Tool",
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "icon_svg",
+          "label": "Icon SVG Code",
+          "info": "Paste complete SVG markup here (optional)"
+        },
+        {
+          "type": "text",
+          "id": "tooltip",
+          "label": "Tooltip Text",
+          "default": "AI Tool"
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "Tool URL",
+          "info": "Optional link to open when clicked"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 8,
+  "presets": [
+    {
+      "name": "AI Tool Orbit",
+      "settings": {
+        "headline": "AI-Powered Innovation",
+        "subhead": "Eight cutting-edge tools working in perfect harmony to transform your workflow.",
+        "caption_center": "AI"
+      },
+      "blocks": [
+        { "type": "tool", "settings": { "tooltip": "GPT-4 • Advanced Language Model" } },
+        { "type": "tool", "settings": { "tooltip": "Claude • Constitutional AI" } },
+        { "type": "tool", "settings": { "tooltip": "Midjourney • AI Art Generation" } },
+        { "type": "tool", "settings": { "tooltip": "Runway • AI Video Creation" } },
+        { "type": "tool", "settings": { "tooltip": "ElevenLabs • Voice Synthesis" } },
+        { "type": "tool", "settings": { "tooltip": "GitHub Copilot • Code Assistant" } },
+        { "type": "tool", "settings": { "tooltip": "Notion AI • Smart Workspace" } },
+        { "type": "tool", "settings": { "tooltip": "Stable Diffusion • Image AI" } }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+<script>
+(function() {
+  'use strict';
+  
+  // Configuration
+  const CONFIG = {
+    animationDuration: {{ section.settings.animation_speed | default: 30 }},
+    enableAdvanced: {{ section.settings.enable_advanced_animations | default: false }},
+    reducedMotion: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  };
+
+  // State management
+  let animationState = {
+    isPlaying: true,
+    isPaused: false
+  };
+
+  // DOM elements
+  const elements = {
+    container: document.querySelector('#tool-orbit .orbit-container'),
+    track: document.querySelector('#tool-orbit .orbit-track'),
+    icons: document.querySelectorAll('#tool-orbit .tool-icon'),
+    ring: document.querySelector('#tool-orbit .orbit-ring')
+  };
+
+  // Utility functions
+  function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+      const later = () => {
+        clearTimeout(timeout);
+        func(...args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
+  }
+
+  function throttle(func, limit) {
+    let inThrottle;
+    return function() {
+      const args = arguments;
+      const context = this;
+      if (!inThrottle) {
+        func.apply(context, args);
+        inThrottle = true;
+        setTimeout(() => inThrottle = false, limit);
+      }
+    };
+  }
+
+  // Animation control functions
+  function pauseAnimation() {
+    if (animationState.isPlaying) {
+      elements.track?.style.setProperty('animation-play-state', 'paused');
+      elements.icons.forEach(icon => {
+        icon.style.setProperty('animation-play-state', 'paused');
+      });
+      animationState.isPaused = true;
+    }
+  }
+
+  function resumeAnimation() {
+    if (animationState.isPaused) {
+      elements.track?.style.setProperty('animation-play-state', 'running');
+      elements.icons.forEach(icon => {
+        icon.style.setProperty('animation-play-state', 'running');
+      });
+      animationState.isPaused = false;
+    }
+  }
+
+  function toggleAnimation() {
+    if (animationState.isPaused) {
+      resumeAnimation();
+    } else {
+      pauseAnimation();
+    }
+  }
+
+  // Event handlers
+  function handleInteractionStart() {
+    pauseAnimation();
+  }
+
+  function handleInteractionEnd() {
+    resumeAnimation();
+  }
+
+  // Enhanced keyboard navigation
+  function handleKeyDown(event) {
+    const icons = Array.from(elements.icons);
+    const currentIndex = icons.indexOf(event.target);
+    
+    switch(event.key) {
+      case 'ArrowRight':
+      case 'ArrowDown':
+        event.preventDefault();
+        const nextIndex = (currentIndex + 1) % icons.length;
+        icons[nextIndex]?.focus();
+        break;
+      case 'ArrowLeft':
+      case 'ArrowUp':
+        event.preventDefault();
+        const prevIndex = (currentIndex - 1 + icons.length) % icons.length;
+        icons[prevIndex]?.focus();
+        break;
+      case 'Home':
+        event.preventDefault();
+        icons[0]?.focus();
+        break;
+      case 'End':
+        event.preventDefault();
+        icons[icons.length - 1]?.focus();
+        break;
+      case 'Enter':
+      case ' ':
+        event.preventDefault();
+        event.target.click();
+        break;
+      case 'Escape':
+        event.target.blur();
+        break;
+    }
+  }
+
+  // Intersection Observer for performance
+  function setupIntersectionObserver() {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          if (!CONFIG.reducedMotion) {
+            resumeAnimation();
+          }
+        } else {
+          pauseAnimation();
+        }
+      });
+    }, {
+      threshold: 0.1
+    });
+
+    if (elements.container) {
+      observer.observe(elements.container);
+    }
+  }
+
+  // Error handling
+  function handleError(error, context) {
+    console.warn(`Tool Orbit: ${context}`, error);
+  }
+
+  // Initialize event listeners
+  function initEventListeners() {
+    if (!elements.container) return;
+
+    try {
+      // Mouse events
+      elements.container.addEventListener('mouseenter', handleInteractionStart);
+      elements.container.addEventListener('mouseleave', handleInteractionEnd);
+
+      // Focus events
+      elements.container.addEventListener('focusin', handleInteractionStart);
+      elements.container.addEventListener('focusout', handleInteractionEnd);
+
+      // Keyboard navigation
+      elements.icons.forEach(icon => {
+        icon.addEventListener('keydown', handleKeyDown);
+      });
+
+      // Touch events for mobile
+      elements.container.addEventListener('touchstart', handleInteractionStart, { passive: true });
+      elements.container.addEventListener('touchend', handleInteractionEnd, { passive: true });
+
+      // Visibility change
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+          pauseAnimation();
+        } else if (!CONFIG.reducedMotion) {
+          resumeAnimation();
+        }
+      });
+
+      // Reduced motion preference change
+      const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+      mediaQuery.addListener((e) => {
+        CONFIG.reducedMotion = e.matches;
+        if (e.matches) {
+          pauseAnimation();
+        }
+      });
+
+    } catch (error) {
+      handleError(error, 'Event listener initialization');
+    }
+  }
+
+  // Performance optimization
+  function optimizePerformance() {
+    // Update CSS custom property for animation duration
+    if (elements.container) {
+      elements.container.style.setProperty('--animation-duration', `${CONFIG.animationDuration}s`);
+    }
+
+    // Reduce animations on lower-end devices
+    if (navigator.hardwareConcurrency && navigator.hardwareConcurrency < 4) {
+      CONFIG.animationDuration = Math.max(CONFIG.animationDuration * 1.5, 45);
+    }
+  }
+
+  // Initialize the orbit
+  function initOrbit() {
+    try {
+      optimizePerformance();
+      
+      if (!CONFIG.reducedMotion) {
+        setupIntersectionObserver();
+      } else {
+        pauseAnimation();
+      }
+
+      initEventListeners();
+
+      // Mark as initialized
+      elements.container?.classList.remove('loading');
+      
+    } catch (error) {
+      handleError(error, 'Orbit initialization');
+    }
+  }
+
+  // Public API for external control
+  window.ToolOrbit = {
+    pause: pauseAnimation,
+    resume: resumeAnimation,
+    toggle: toggleAnimation,
+    getState: () => ({ ...animationState })
+  };
+
+  // Initialize when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initOrbit);
+  } else {
+    initOrbit();
+  }
+
+})();
+</script>

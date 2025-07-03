@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Tool Orbit - Example Usage</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        
+        /* Include the CSS from improved-tool-orbit.liquid here */
+        /* ... CSS content ... */
+        
+        /* Example page styles */
+        .demo-controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+        
+        .demo-controls button {
+            display: block;
+            width: 100%;
+            margin: 5px 0;
+            padding: 8px 12px;
+            border: 1px solid #2563eb;
+            background: white;
+            color: #2563eb;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .demo-controls button:hover {
+            background: #2563eb;
+            color: white;
+        }
+        
+        .info-panel {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            max-width: 300px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Demo Controls -->
+    <div class="demo-controls">
+        <h4 style="margin: 0 0 10px 0;">Animation Controls</h4>
+        <button onclick="ToolOrbit.pause()">Pause</button>
+        <button onclick="ToolOrbit.resume()">Resume</button>
+        <button onclick="ToolOrbit.toggle()">Toggle</button>
+        <button onclick="showState()">Show State</button>
+    </div>
+
+    <!-- Info Panel -->
+    <div class="info-panel">
+        <strong>Try these interactions:</strong><br>
+        • Hover over icons to pause animation<br>
+        • Use Tab/Arrow keys for navigation<br>
+        • Click tools to visit their sites<br>
+        • Use controls on the right to test API
+    </div>
+
+    <!-- Tool Orbit Section -->
+    <section id="tool-orbit" aria-labelledby="orbit-heading">
+        <div class="orbit-wrapper">
+            <!-- Content -->
+            <div class="orbit-content">
+                <h2 id="orbit-heading" class="orbit-headline">AI-Powered Innovation</h2>
+                <p class="orbit-subhead">Eight cutting-edge tools working in perfect harmony to transform your workflow.</p>
+            </div>
+
+            <!-- Orbit Animation -->
+            <div class="orbit-container" role="region" aria-label="Interactive AI tools constellation">
+                <!-- Static visual ring -->
+                <div class="orbit-ring" aria-hidden="true"></div>
+                
+                <!-- Rotating track with icons -->
+                <div class="orbit-track" role="group" aria-label="AI tools">
+                    <!-- Tool 1: GPT-4 -->
+                    <div class="icon-wrapper">
+                        <a href="https://openai.com/gpt-4" 
+                           class="tool-icon"
+                           aria-describedby="tooltip-1"
+                           target="_blank"
+                           rel="noopener noreferrer">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                            </svg>
+                            <span class="sr-only">GPT-4 • Advanced Language Model</span>
+                            <div id="tooltip-1" class="tooltip" role="tooltip">GPT-4 • Advanced Language Model</div>
+                        </a>
+                    </div>
+
+                    <!-- Tool 2: Claude -->
+                    <div class="icon-wrapper">
+                        <button class="tool-icon" aria-describedby="tooltip-2">
+                            <div class="tool-placeholder" aria-hidden="true">C</div>
+                            <span class="sr-only">Claude • Constitutional AI</span>
+                            <div id="tooltip-2" class="tooltip" role="tooltip">Claude • Constitutional AI</div>
+                        </button>
+                    </div>
+
+                    <!-- Tool 3: Midjourney -->
+                    <div class="icon-wrapper">
+                        <button class="tool-icon" aria-describedby="tooltip-3">
+                            <div class="tool-placeholder" aria-hidden="true">M</div>
+                            <span class="sr-only">Midjourney • AI Art Generation</span>
+                            <div id="tooltip-3" class="tooltip" role="tooltip">Midjourney • AI Art Generation</div>
+                        </button>
+                    </div>
+
+                    <!-- Tool 4: Runway -->
+                    <div class="icon-wrapper">
+                        <button class="tool-icon" aria-describedby="tooltip-4">
+                            <div class="tool-placeholder" aria-hidden="true">R</div>
+                            <span class="sr-only">Runway • AI Video Creation</span>
+                            <div id="tooltip-4" class="tooltip" role="tooltip">Runway • AI Video Creation</div>
+                        </button>
+                    </div>
+
+                    <!-- Tool 5: ElevenLabs -->
+                    <div class="icon-wrapper">
+                        <button class="tool-icon" aria-describedby="tooltip-5">
+                            <div class="tool-placeholder" aria-hidden="true">E</div>
+                            <span class="sr-only">ElevenLabs • Voice Synthesis</span>
+                            <div id="tooltip-5" class="tooltip" role="tooltip">ElevenLabs • Voice Synthesis</div>
+                        </button>
+                    </div>
+
+                    <!-- Tool 6: GitHub Copilot -->
+                    <div class="icon-wrapper">
+                        <button class="tool-icon" aria-describedby="tooltip-6">
+                            <div class="tool-placeholder" aria-hidden="true">G</div>
+                            <span class="sr-only">GitHub Copilot • Code Assistant</span>
+                            <div id="tooltip-6" class="tooltip" role="tooltip">GitHub Copilot • Code Assistant</div>
+                        </button>
+                    </div>
+
+                    <!-- Tool 7: Notion AI -->
+                    <div class="icon-wrapper">
+                        <button class="tool-icon" aria-describedby="tooltip-7">
+                            <div class="tool-placeholder" aria-hidden="true">N</div>
+                            <span class="sr-only">Notion AI • Smart Workspace</span>
+                            <div id="tooltip-7" class="tooltip" role="tooltip">Notion AI • Smart Workspace</div>
+                        </button>
+                    </div>
+
+                    <!-- Tool 8: Stable Diffusion -->
+                    <div class="icon-wrapper">
+                        <button class="tool-icon" aria-describedby="tooltip-8">
+                            <div class="tool-placeholder" aria-hidden="true">S</div>
+                            <span class="sr-only">Stable Diffusion • Image AI</span>
+                            <div id="tooltip-8" class="tooltip" role="tooltip">Stable Diffusion • Image AI</div>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Static center logo -->
+                <div class="center-logo" aria-label="Center: AI">AI</div>
+            </div>
+
+            <!-- Mobile fallback grid -->
+            <div class="mobile-grid" role="grid" aria-label="AI tools grid">
+                <button class="tool-icon" aria-label="GPT-4 • Advanced Language Model">
+                    <div class="tool-placeholder" aria-hidden="true">G</div>
+                </button>
+                <button class="tool-icon" aria-label="Claude • Constitutional AI">
+                    <div class="tool-placeholder" aria-hidden="true">C</div>
+                </button>
+                <button class="tool-icon" aria-label="Midjourney • AI Art Generation">
+                    <div class="tool-placeholder" aria-hidden="true">M</div>
+                </button>
+                <button class="tool-icon" aria-label="Runway • AI Video Creation">
+                    <div class="tool-placeholder" aria-hidden="true">R</div>
+                </button>
+                <div class="center-logo" aria-label="Center: AI">AI</div>
+                <button class="tool-icon" aria-label="ElevenLabs • Voice Synthesis">
+                    <div class="tool-placeholder" aria-hidden="true">E</div>
+                </button>
+                <button class="tool-icon" aria-label="GitHub Copilot • Code Assistant">
+                    <div class="tool-placeholder" aria-hidden="true">G</div>
+                </button>
+                <button class="tool-icon" aria-label="Notion AI • Smart Workspace">
+                    <div class="tool-placeholder" aria-hidden="true">N</div>
+                </button>
+                <button class="tool-icon" aria-label="Stable Diffusion • Image AI">
+                    <div class="tool-placeholder" aria-hidden="true">S</div>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Include the JavaScript from improved-tool-orbit.liquid here -->
+    <script>
+        // Simplified version of the improved JavaScript for demo
+        (function() {
+            'use strict';
+            
+            const CONFIG = {
+                animationDuration: 30,
+                reducedMotion: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+            };
+
+            let animationState = {
+                isPlaying: true,
+                isPaused: false
+            };
+
+            const elements = {
+                container: document.querySelector('#tool-orbit .orbit-container'),
+                track: document.querySelector('#tool-orbit .orbit-track'),
+                icons: document.querySelectorAll('#tool-orbit .tool-icon'),
+                ring: document.querySelector('#tool-orbit .orbit-ring')
+            };
+
+            function pauseAnimation() {
+                if (animationState.isPlaying) {
+                    elements.track?.style.setProperty('animation-play-state', 'paused');
+                    elements.icons.forEach(icon => {
+                        icon.style.setProperty('animation-play-state', 'paused');
+                    });
+                    animationState.isPaused = true;
+                }
+            }
+
+            function resumeAnimation() {
+                if (animationState.isPaused) {
+                    elements.track?.style.setProperty('animation-play-state', 'running');
+                    elements.icons.forEach(icon => {
+                        icon.style.setProperty('animation-play-state', 'running');
+                    });
+                    animationState.isPaused = false;
+                }
+            }
+
+            function toggleAnimation() {
+                if (animationState.isPaused) {
+                    resumeAnimation();
+                } else {
+                    pauseAnimation();
+                }
+            }
+
+            // Event listeners
+            if (elements.container) {
+                elements.container.addEventListener('mouseenter', pauseAnimation);
+                elements.container.addEventListener('mouseleave', resumeAnimation);
+                elements.container.addEventListener('focusin', pauseAnimation);
+                elements.container.addEventListener('focusout', resumeAnimation);
+            }
+
+            // Public API
+            window.ToolOrbit = {
+                pause: pauseAnimation,
+                resume: resumeAnimation,
+                toggle: toggleAnimation,
+                getState: () => ({ ...animationState })
+            };
+
+            // Initialize
+            if (CONFIG.reducedMotion) {
+                pauseAnimation();
+            }
+        })();
+
+        // Demo function
+        function showState() {
+            const state = ToolOrbit.getState();
+            alert(`Animation State:\nPlaying: ${state.isPlaying}\nPaused: ${state.isPaused}`);
+        }
+    </script>
+
+    <!-- Include CSS (note: you would include the full CSS from improved-tool-orbit.liquid) -->
+    <style>
+        /* Add the complete CSS from improved-tool-orbit.liquid here */
+        /* This is just a placeholder reminder */
+    </style>
+</body>
+</html>
