@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tool Orbit Animation - WORKING</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --orbit-radius: 140px;
+            --icon-size: 50px;
+            --logo-size: 70px;
+            --primary-blue: #2563eb;
+            --secondary-blue: #3b82f6;
+            --light-blue: #dbeafe;
+            --white: #ffffff;
+            --gray-100: #f3f4f6;
+            --gray-600: #4b5563;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .content-section {
+            text-align: center;
+            margin-bottom: 3rem;
+            max-width: 600px;
+        }
+
+        .content-section h1 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            color: var(--gray-600);
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .content-section p {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            color: var(--gray-600);
+            line-height: 1.6;
+        }
+
+        /* ORBIT CONTAINER */
+        .orbit-container {
+            position: relative;
+            width: calc(var(--orbit-radius) * 2.4);
+            height: calc(var(--orbit-radius) * 2.4);
+            margin: 0 auto;
+        }
+
+        /* ROTATING TRACK (this rotates) */
+        .orbit-track {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            animation: orbit-spin 30s linear infinite;
+            will-change: transform;
+        }
+
+        @keyframes orbit-spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* VISUAL RING (static) */
+        .orbit-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: calc(var(--orbit-radius) * 2);
+            height: calc(var(--orbit-radius) * 2);
+            border: 2px solid rgba(37, 99, 235, 0.15);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* CENTER LOGO (static) */
+        .center-logo {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: var(--logo-size);
+            height: var(--logo-size);
+            background: var(--white);
+            border: 3px solid var(--light-blue);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--primary-blue);
+            box-shadow: var(--shadow-lg);
+            z-index: 10;
+        }
+
+        /* ICON WRAPPER (moves with track) */
+        .icon-wrapper {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: var(--icon-size);
+            height: var(--icon-size);
+        }
+
+        /* TOOL ICON (counter-rotates to stay upright) */
+        .tool-icon {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: var(--white);
+            border: 2px solid var(--gray-100);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow);
+            animation: counter-spin 30s linear infinite reverse;
+            will-change: transform;
+        }
+
+        @keyframes counter-spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .tool-icon:hover {
+            scale: 1.15;
+            box-shadow: var(--shadow-lg);
+            border-color: var(--secondary-blue);
+            z-index: 5;
+        }
+
+        .tool-icon svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--primary-blue);
+        }
+
+        .tool-placeholder {
+            width: 24px;
+            height: 24px;
+            background: var(--primary-blue);
+            color: white;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        /* Position icon wrappers around circle */
+        .icon-wrapper:nth-child(1) { 
+            transform: translate(-50%, -50%) rotate(0deg) translateY(calc(var(--orbit-radius) * -1));
+        }
+        .icon-wrapper:nth-child(2) { 
+            transform: translate(-50%, -50%) rotate(45deg) translateY(calc(var(--orbit-radius) * -1));
+        }
+        .icon-wrapper:nth-child(3) { 
+            transform: translate(-50%, -50%) rotate(90deg) translateY(calc(var(--orbit-radius) * -1));
+        }
+        .icon-wrapper:nth-child(4) { 
+            transform: translate(-50%, -50%) rotate(135deg) translateY(calc(var(--orbit-radius) * -1));
+        }
+        .icon-wrapper:nth-child(5) { 
+            transform: translate(-50%, -50%) rotate(180deg) translateY(calc(var(--orbit-radius) * -1));
+        }
+        .icon-wrapper:nth-child(6) { 
+            transform: translate(-50%, -50%) rotate(225deg) translateY(calc(var(--orbit-radius) * -1));
+        }
+        .icon-wrapper:nth-child(7) { 
+            transform: translate(-50%, -50%) rotate(270deg) translateY(calc(var(--orbit-radius) * -1));
+        }
+        .icon-wrapper:nth-child(8) { 
+            transform: translate(-50%, -50%) rotate(315deg) translateY(calc(var(--orbit-radius) * -1));
+        }
+
+        /* TOOLTIP */
+        .tooltip {
+            position: absolute;
+            bottom: calc(100% + 12px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--gray-600);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+            z-index: 20;
+        }
+
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: var(--gray-600);
+        }
+
+        .tool-icon:hover .tooltip {
+            opacity: 1;
+        }
+
+        /* PAUSE ANIMATION ON HOVER */
+        .orbit-container:hover .orbit-track,
+        .orbit-container:hover .tool-icon {
+            animation-play-state: paused;
+        }
+
+        /* RESPONSIVE */
+        @media (min-width: 600px) {
+            :root {
+                --orbit-radius: 180px;
+                --icon-size: 60px;
+                --logo-size: 80px;
+            }
+        }
+
+        @media (min-width: 900px) {
+            :root {
+                --orbit-radius: 220px;
+                --icon-size: 70px;
+                --logo-size: 90px;
+            }
+        }
+
+        /* MOBILE FALLBACK */
+        @media (max-width: 599px) {
+            .orbit-container {
+                display: none;
+            }
+            
+            .mobile-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 1rem;
+                max-width: 300px;
+                margin: 0 auto;
+            }
+            
+            .mobile-grid .tool-icon {
+                position: static;
+                transform: none;
+                animation: none;
+                margin: 0 auto;
+                width: var(--icon-size);
+                height: var(--icon-size);
+            }
+            
+            .mobile-grid .center-logo {
+                position: static;
+                transform: none;
+                grid-column: 2;
+                margin: 0 auto;
+                width: var(--logo-size);
+                height: var(--logo-size);
+            }
+            
+            .mobile-grid .tooltip {
+                display: none;
+            }
+        }
+
+        /* REDUCED MOTION */
+        @media (prefers-reduced-motion: reduce) {
+            .orbit-track,
+            .tool-icon {
+                animation: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="content-section">
+        <h1>AI-Powered Innovation</h1>
+        <p>Eight cutting-edge tools working in perfect harmony to transform your workflow.</p>
+    </div>
+
+    <div class="orbit-container">
+        <!-- Static visual ring -->
+        <div class="orbit-ring"></div>
+        
+        <!-- Rotating track that contains all icons -->
+        <div class="orbit-track">
+            <div class="icon-wrapper">
+                <button class="tool-icon">
+                    <div class="tool-placeholder">G</div>
+                    <div class="tooltip">GPT-4 • Language Model</div>
+                </button>
+            </div>
+            
+            <div class="icon-wrapper">
+                <button class="tool-icon">
+                    <div class="tool-placeholder">C</div>
+                    <div class="tooltip">Claude • Constitutional AI</div>
+                </button>
+            </div>
+            
+            <div class="icon-wrapper">
+                <button class="tool-icon">
+                    <div class="tool-placeholder">M</div>
+                    <div class="tooltip">Midjourney • AI Art</div>
+                </button>
+            </div>
+            
+            <div class="icon-wrapper">
+                <button class="tool-icon">
+                    <div class="tool-placeholder">R</div>
+                    <div class="tooltip">Runway • AI Video</div>
+                </button>
+            </div>
+            
+            <div class="icon-wrapper">
+                <button class="tool-icon">
+                    <div class="tool-placeholder">E</div>
+                    <div class="tooltip">ElevenLabs • Voice</div>
+                </button>
+            </div>
+            
+            <div class="icon-wrapper">
+                <button class="tool-icon">
+                    <div class="tool-placeholder">G</div>
+                    <div class="tooltip">GitHub Copilot • Code</div>
+                </button>
+            </div>
+            
+            <div class="icon-wrapper">
+                <button class="tool-icon">
+                    <div class="tool-placeholder">N</div>
+                    <div class="tooltip">Notion AI • Workspace</div>
+                </button>
+            </div>
+            
+            <div class="icon-wrapper">
+                <button class="tool-icon">
+                    <div class="tool-placeholder">S</div>
+                    <div class="tooltip">Stable Diffusion • Images</div>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Static center logo -->
+        <div class="center-logo">AI</div>
+    </div>
+
+    <!-- Mobile fallback grid -->
+    <div class="mobile-grid" style="display: none;">
+        <button class="tool-icon">
+            <div class="tool-placeholder">G</div>
+        </button>
+        <div class="center-logo">AI</div>
+        <button class="tool-icon">
+            <div class="tool-placeholder">C</div>
+        </button>
+        <button class="tool-icon">
+            <div class="tool-placeholder">M</div>
+        </button>
+        <button class="tool-icon">
+            <div class="tool-placeholder">R</div>
+        </button>
+        <button class="tool-icon">
+            <div class="tool-placeholder">E</div>
+        </button>
+        <button class="tool-icon">
+            <div class="tool-placeholder">G</div>
+        </button>
+        <button class="tool-icon">
+            <div class="tool-placeholder">N</div>
+        </button>
+        <button class="tool-icon">
+            <div class="tool-placeholder">S</div>
+        </button>
+    </div>
+</body>
+</html>
